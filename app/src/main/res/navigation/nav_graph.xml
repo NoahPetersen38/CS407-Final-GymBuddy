@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.cs407.gymsocialapp.LoginScreen"
+        android:label="Login" >
+        <action
+            android:id="@+id/action_loginFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.cs407.gymsocialapp.MainFragment"
+        android:label="Main">
+        <action
+            android:id="@+id/action_mainFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.cs407.gymsocialapp.HomeScreen"
+        android:label="Home" />
+    <fragment
+        android:id="@+id/navigation_add_workout"
+        android:name="com.cs407.gymsocialapp.AddWorkoutScreen"
+        android:label="Add Workout" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.cs407.gymsocialapp.ProfileScreen"
+        android:label="Profile" />
+</navigation>
