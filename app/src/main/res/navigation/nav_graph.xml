@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/loginFragment">
 
     <fragment
@@ -10,6 +11,9 @@
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_signUpScreen"
+            app:destination="@id/signUpScreen" />
     </fragment>
 
     <fragment
@@ -33,4 +37,13 @@
         android:id="@+id/navigation_profile"
         android:name="com.cs407.gymsocialapp.ProfileScreen"
         android:label="Profile" />
+    <fragment
+        android:id="@+id/signUpScreen"
+        android:name="com.cs407.gymsocialapp.SignUpScreen"
+        android:label="fragment_sign_up_screen"
+        tools:layout="@layout/fragment_sign_up_screen" >
+        <action
+            android:id="@+id/action_signUpScreen_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>
