@@ -25,6 +25,7 @@
     <string name="password_text">Create password:</string>
     <string name="password_confirm">Confirm password:</string>
     <string name="create_account_text">Sign Up</string>
+    <!-- Strings related to profile screen -->
     <string name="profile_username_txt">Username</string>
     <string name="post_streak_txt">🔥Streak: 0</string>
     <string name="followers_txt">0 Followers</string>
@@ -34,6 +35,14 @@
     <string name="b_create_post_txt">+</string>
     <string name="b_mygymbuds_txt">MyGymBuds</string>
     <string name="profile_image">Profile Image</string>
-
+    <!-- Strings related to workout screen -->
+    <string name="record_workout_txt">Record Workout</string>
+    <string name="b_add_set_txt">+ Set</string>
+    <string name="workout_title_txt">Workout:</string>
+    <string name="input_workout_title_txt">Title:</string>
+    <string name="input_workout_desc_txt">Description:</string>
+    <string name="b_post_workout_txt">Post</string>
+    <string name="b_back_workout_txt">Back</string>
+    <!-- Strings related to  -->
 
 </resources>
