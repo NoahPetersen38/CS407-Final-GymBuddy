@@ -25,4 +25,15 @@
     <string name="password_text">Create password:</string>
     <string name="password_confirm">Confirm password:</string>
     <string name="create_account_text">Sign Up</string>
+    <string name="profile_username_txt">Username</string>
+    <string name="post_streak_txt">🔥Streak: 0</string>
+    <string name="followers_txt">0 Followers</string>
+    <string name="following_txt">0 Following</string>
+    <string name="b_edit_prof_txt">Edit Profile</string>
+    <string name="b_home_txt">Home</string>
+    <string name="b_create_post_txt">+</string>
+    <string name="b_mygymbuds_txt">MyGymBuds</string>
+    <string name="profile_image">Profile Image</string>
+
+
 </resources>
