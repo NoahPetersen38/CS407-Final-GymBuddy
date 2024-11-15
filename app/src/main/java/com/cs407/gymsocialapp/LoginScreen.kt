@@ -49,6 +49,7 @@ class LoginScreen : Fragment() {
 
             if (isLoginSuccessful) {
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                findNavController().navigate(R.id.action_mainFragment_to_navigation_home)
             }
         }
     }
