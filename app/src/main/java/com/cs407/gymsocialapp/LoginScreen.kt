@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,6 +50,7 @@ class LoginScreen : Fragment() {
 
             if (isLoginSuccessful) {
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                findNavController().navigate(R.id.action_mainFragment_to_navigation_home)
             }
         }
     }

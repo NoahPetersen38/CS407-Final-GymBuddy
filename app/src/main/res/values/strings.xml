@@ -43,6 +43,10 @@
     <string name="input_workout_desc_txt">Description:</string>
     <string name="b_post_workout_txt">Post</string>
     <string name="b_back_workout_txt">Back</string>
-    <!-- Strings related to  -->
+    <!-- Strings related to Home Screen -->
+    <string name="search">Search</string>
+    <string name="motivational_image_desc">Motivational Image</string>
+    <string name="search_usernames">Search usernames</string>
+
 
 </resources>
