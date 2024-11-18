@@ -1,77 +1,152 @@
 package com.cs407.gymsocialapp
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.cs407.gymsocialapp.data.AppDatabase
+import com.cs407.gymsocialapp.data.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.security.MessageDigest
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class LoginScreen() : Fragment() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginScreen.newInstance] factory method to
- * create an instance of this fragment.
- */
-class LoginScreen : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var usernameEditText: EditText
+    private lateinit var passwordEditText: EditText
+    private lateinit var loginButton: Button
+    private lateinit var signUpButton: Button
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var userPasswdKV: SharedPreferences
+    private lateinit var appDB: AppDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_login_screen, container, false)
+
+        // Initialize variables
+        usernameEditText = view.findViewById<EditText>(R.id.et_username)
+        passwordEditText = view.findViewById<EditText>(R.id.et_password)
+        loginButton = view.findViewById<Button>(R.id.login_button)
+        signUpButton = view.findViewById<Button>(R.id.to_sign_up_button)
+
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+        userPasswdKV = requireContext().getSharedPreferences(
+            getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
+
+        appDB = AppDatabase.getInstance(requireContext())
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val loginButton = view.findViewById<Button>(R.id.login_button)
-        loginButton.setOnClickListener {
-            // Perform login validation here.
-            val isLoginSuccessful = true  // Simulate successful login.
+        // Switch to sign-up fragment if the sign up button is clicked
+        signUpButton.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_signUpScreen)
+        }
 
-            if (isLoginSuccessful) {
-                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-                findNavController().navigate(R.id.action_mainFragment_to_navigation_home)
+        loginButton.setOnClickListener {
+            // Get username and password from fields
+            val user = usernameEditText.text.toString().trim()
+            val passwd = passwordEditText.text.toString().trim()
+
+
+            // check if username or password is empty
+            if (user.isEmpty() || passwd.isEmpty()) {
+            // show an error toast message when username or password field is empty
+                Toast.makeText(
+                    this.context, "Username or Password field is empty", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                lifecycleScope.launch {
+                    // error catching
+                    try{
+
+                        // log-in the user
+                        val success: Boolean = getUserPasswd(user, passwd)
+                        Log.d("Login Result", success.toString())
+
+                        // navigate with successful login
+                        if(success) {
+                            // set the newly logged-in user to the viewModel
+                            userViewModel.setUser(UserState(
+                                0,
+                                user,
+                                passwd))
+                            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("login Error", "Error during login: ${e.message}")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                parentFragment?.context, "Error", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
             }
         }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment LoginScreen.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            LoginScreen().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private suspend fun getUserPasswd(
+        user: String,
+        passwdPlain: String
+    ): Boolean {
+
+        // Hash the plain password
+        val hashedPasswd: String = hash(passwdPlain)
+
+        // Check if the user has created an account, then compare given PW to the stored PW
+        val storedPasswd = userPasswdKV.getString(user, null)
+        if (storedPasswd != null) { // Username corresponds to a previously-created account
+
+            if (storedPasswd == hashedPasswd) { // Passwords match
+                return true
+            } else { // Passwords don't match - tell user to retry
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        parentFragment?.context,
+                        "wrong password, please try again",
+                        Toast.LENGTH_LONG)
+                        .show()
                 }
             }
+
+        }  else { // username DNE in SharedPreferences - point user towards sign-up fragment
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    parentFragment?.context,
+                    "username does not exist, please sign up",
+                    Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
+
+        // user gave the wrong password or does not have an account
+        return false
+    }
+
+    private fun hash(input: String): String {
+        return MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
+            .fold("") { str, it -> str + "%02x".format(it) }
     }
 }

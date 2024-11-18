@@ -15,6 +15,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="sign_up_text">Not a member?</string>
     <string name="sign_up_button_txt">Sign Up!</string>
+    <string name="userPasswdKV">com.cs407.gymsocialapp.userPasswdKV</string>
     <!-- Strings related to sign up -->
     <string name="sign_up_subtext">Create an account:</string>
     <string name="first_name">Enter first name:</string>
