@@ -145,6 +145,7 @@ class LoginScreen() : Fragment() {
         return false
     }
 
+    // Hash used to safely store password in SharedPreferences
     private fun hash(input: String): String {
         return MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
             .fold("") { str, it -> str + "%02x".format(it) }
