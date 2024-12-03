@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.cs407.gymsocialapp.data.AppDatabase
+import com.cs407.gymsocialapp.data.PostDatabase
 import com.cs407.gymsocialapp.data.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ class LoginScreen() : Fragment() {
     private lateinit var signUpButton: Button
     private lateinit var userViewModel: UserViewModel
     private lateinit var userPasswdKV: SharedPreferences
-    private lateinit var appDB: AppDatabase
+    private lateinit var appDB: PostDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +51,7 @@ class LoginScreen() : Fragment() {
         userPasswdKV = requireContext().getSharedPreferences(
             getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
 
-        appDB = AppDatabase.getInstance(requireContext())
+        appDB = PostDatabase.getInstance(requireContext())
 
         return view
     }
@@ -93,6 +93,7 @@ class LoginScreen() : Fragment() {
                                 user,
                                 passwd))
                             findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                            findNavController().navigate(R.id.action_mainFragment_to_navigation_home)
                         }
 
                     } catch (e: Exception) {

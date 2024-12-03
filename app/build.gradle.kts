@@ -64,4 +64,6 @@ dependencies {
 
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
+
+    implementation("com.prolificinteractive:material-calendarview:1.4.3")
 }

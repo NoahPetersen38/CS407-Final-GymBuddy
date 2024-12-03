@@ -73,23 +73,29 @@ interface PostDao {
 
     @Query("SELECT * FROM posts ORDER BY timestamp DESC")
     suspend fun getAllPosts(): List<Post>
+
+    @Query("SELECT timestamp FROM posts WHERE userId = :userId")
+    suspend fun getPostTimestampsByUser(userId: Int): List<Long>
+
+    @Query("SELECT timestamp FROM posts")
+    suspend fun getAllPostTimestamps(): List<Long>
 }
 
 @Database(entities = [User::class, Post::class], version = 1, exportSchema = false)
-abstract class AppDatabase : RoomDatabase() {
+abstract class PostDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun postDao(): PostDao
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var INSTANCE: PostDatabase? = null
 
-        fun getInstance(context: Context): AppDatabase {
+        fun getInstance(context: Context): PostDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDatabase::class.java,
+                    PostDatabase::class.java,
                     "app_database"
                 ).build()
                 INSTANCE = instance
