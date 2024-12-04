@@ -15,6 +15,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="sign_up_text">Not a member?</string>
     <string name="sign_up_button_txt">Sign Up!</string>
+    <string name="userPasswdKV">com.cs407.gymsocialapp.userPasswdKV</string>
     <!-- Strings related to sign up -->
     <string name="sign_up_subtext">Create an account:</string>
     <string name="first_name">Enter first name:</string>
@@ -25,6 +26,8 @@
     <string name="password_text">Create password:</string>
     <string name="password_confirm">Confirm password:</string>
     <string name="create_account_text">Sign Up</string>
+    <string name="log_in_txt">Already a member?</string>
+    <string name="log_in_button_txt">Back to login screen</string>
     <!-- Strings related to profile screen -->
     <string name="profile_username_txt">Username</string>
     <string name="post_streak_txt">🔥Streak: 0</string>
@@ -43,6 +46,10 @@
     <string name="input_workout_desc_txt">Description:</string>
     <string name="b_post_workout_txt">Post</string>
     <string name="b_back_workout_txt">Back</string>
-    <!-- Strings related to  -->
+    <!-- Strings related to Home Screen -->
+    <string name="search">Search</string>
+    <string name="motivational_image_desc">Motivational Image</string>
+    <string name="search_usernames">Search usernames</string>
+
 
 </resources>

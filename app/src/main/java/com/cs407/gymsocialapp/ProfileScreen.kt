@@ -1,10 +1,20 @@
 package com.cs407.gymsocialapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import kotlinx.coroutines.launch
+import com.cs407.gymsocialapp.data.PostDatabase
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +30,8 @@ class ProfileScreen : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var postDatabase: PostDatabase
+    private lateinit var calendar: MaterialCalendarView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +47,109 @@ class ProfileScreen : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile_screen, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        postDatabase = PostDatabase.getInstance(requireContext())
+
+        // Now that the view is fully created, we can safely access and modify it
+        calendar = view.findViewById(R.id.materialCalendarView)
+
+        // Get the current date and set it as the selected date
+        val currentDate = Calendar.getInstance()
+        calendar?.selectedDate = CalendarDay.from(currentDate.time)
+
+        // Set the selection color
+        val selectionColor = ContextCompat.getColor(requireContext(), com.google.android.material.R.color.material_dynamic_neutral90)
+        calendar?.setSelectionColor(selectionColor)
+
+        highlightPostsOnCalendar()
+    }
+
+    private fun findRecentStreak(dates: List<CalendarDay>): List<CalendarDay> {
+        val streak = mutableListOf<CalendarDay>()
+
+        if (dates.isEmpty()) {
+            return streak
+        }
+
+        streak.add(dates.first()) // Add the most recent date to start the streak
+
+        var lastDate = dates.first()
+        for (i in 1 until dates.size) {
+            val currentDate = dates[i]
+
+            // Compare the current date and last date
+            val isOneDayDifference = when {
+                currentDate.year > lastDate.year -> true // New year, so it’s at least one day
+                currentDate.year < lastDate.year -> false // Same logic for years
+                currentDate.month > lastDate.month -> true // Next month
+                currentDate.month < lastDate.month -> false // Previous month
+                currentDate.day > lastDate.day -> currentDate.day - lastDate.day == 1 // Same month, check if days are 1 apart
+                else -> false // Same day
+            }
+
+            if (isOneDayDifference) {
+                streak.add(currentDate)
+                lastDate = currentDate
+            } else {
+                // End the streak once we hit a non-consecutive date
+                break
+            }
+
+            // Stop if we have reached the current day
+            if (currentDate == CalendarDay.from(Calendar.getInstance().time)) {
+                break
+            }
+        }
+        return streak
+    }
+
+    private fun highlightPostsOnCalendar() {
+        // Use a coroutine to load posts asynchronously
+        lifecycleScope.launch {
+            // Get all post timestamps
+            val postTimestamps = postDatabase.postDao().getAllPostTimestamps()
+
+            // Convert timestamps to CalendarDay objects
+            val datesToHighlight = postTimestamps.map { timestamp ->
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = timestamp
+                CalendarDay.from(calendar.time)
+            }
+
+            val sortedDates = datesToHighlight.sortedByDescending { it.date }
+            val streak = findRecentStreak(sortedDates)
+
+            val streakNumber = view?.findViewById<TextView>(R.id.streak)
+            streakNumber?.text = "\uD83D\uDD25Streak: " + (streak?.size ?: 0)
+
+            // Add decorators to highlight dates on the calendar
+            val decorators = datesToHighlight.map { date ->
+                object : DayViewDecorator {
+                    override fun shouldDecorate(day: CalendarDay): Boolean {
+                        return day == date
+                    }
+
+                    override fun decorate(view: DayViewFacade?) {
+                        // Customize the highlight (e.g., use a background color)
+                        ContextCompat.getDrawable(requireContext(), com.google.android.material.R.color.material_dynamic_neutral20)
+                            ?.let {
+                                view?.setBackgroundDrawable(
+                                    it
+                                )
+                            }
+                    }
+                }
+            }
+
+            // Apply the decorators to the calendar
+            decorators.forEach { decorator ->
+                calendar.addDecorator(decorator)
+            }
+        }
     }
 
     companion object {
