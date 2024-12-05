@@ -55,6 +55,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.paging.common.android)
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+
 
     implementation(libs.androidx.recyclerview)
 
