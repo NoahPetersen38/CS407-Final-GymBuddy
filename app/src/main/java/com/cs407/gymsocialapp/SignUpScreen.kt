@@ -1,10 +1,13 @@
 package com.cs407.gymsocialapp
+/// TODO: fix this shit, sign up to home, nav
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,5 +58,9 @@ class SignUpScreen : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+        // TODO: fix this shit
+        /*signUpButton.setOnClickListener {
+            findNavController().navigate(R.id.action_signUpScreen_to_mainFragment)
+        } */
     }
 }
