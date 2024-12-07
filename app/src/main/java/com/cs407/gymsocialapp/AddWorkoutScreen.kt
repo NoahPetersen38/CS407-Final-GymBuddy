@@ -12,11 +12,7 @@ import android.widget.Toast
 
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AddWorkoutScreen.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class AddWorkoutScreen : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -44,7 +40,7 @@ class AddWorkoutScreen : Fragment() {
         return inflater.inflate(R.layout.fragment_add_workout_screen, container, false)
 
         // TODO: Initialize UI components
-      /*  setListContainer = view.findViewById(R.id.set_list_container)
+        setListContainer = view.findViewById(R.id.set_list_container)
         workoutTitle = view.findViewById(R.id.edit_workout_title)
         workoutDescription = view.findViewById(R.id.edit_workout_description)
         addSetButton = view.findViewById(R.id.b_add_set)
@@ -56,7 +52,7 @@ class AddWorkoutScreen : Fragment() {
         postButton.setOnClickListener { postWorkout() }
         backButton.setOnClickListener { requireActivity().onBackPressed() }
 
-        return view */
+        return view
     }
 
     private fun addSet() {
