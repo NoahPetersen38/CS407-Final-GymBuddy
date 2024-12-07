@@ -88,59 +88,22 @@
 
             <!-- Calendar and Buttons Wrapper -->
             <LinearLayout
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="16dp">
 
                 <!-- Calendar View -->
-                <CalendarView
-                    android:id="@+id/calendarView"
+                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                    android:id="@+id/materialCalendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp" />
+                    app:mcv_showOtherDates="all"
+                    app:mcv_selectionColor="@color/material_dynamic_primary50"
+                    app:mcv_weekDayTextAppearance="@style/Base.Theme.GymSocialApp"
+                    app:mcv_dateTextAppearance="@style/Base.Theme.GymSocialApp" />
 
-                <!-- Navigation Buttons -->
-                <LinearLayout
-                    style="?android:attr/buttonBarStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-
-                    <!-- Home Button -->
-                    <Button
-                        android:id="@+id/b_home"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/b_home_txt"
-                        android:onClick="goToHome" />
-
-                    <!-- Create Post Button -->
-                    <Button
-                        android:id="@+id/b_create_post"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/b_create_post_txt"
-                        android:onClick="goToCreatePost" />
-
-                    <!-- View Posts Button -->
-                    <Button
-                        android:id="@+id/b_mygymbuds"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/b_mygymbuds_txt"
-                        android:onClick="goToMyGymBuds" />
-
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

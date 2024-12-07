@@ -26,6 +26,8 @@
     <string name="password_text">Create password:</string>
     <string name="password_confirm">Confirm password:</string>
     <string name="create_account_text">Sign Up</string>
+    <string name="log_in_txt">Already a member?</string>
+    <string name="log_in_button_txt">Back to login screen</string>
     <!-- Strings related to profile screen -->
     <string name="profile_username_txt">Username</string>
     <string name="post_streak_txt">🔥Streak: 0</string>
