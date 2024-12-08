@@ -9,16 +9,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.cs407.gymsocialapp.data.Post
+import com.cs407.gymsocialapp.data.PostDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 
 
 class AddWorkoutScreen : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    // UI
     private lateinit var setListContainer: LinearLayout
     private lateinit var workoutTitle: EditText
     private lateinit var workoutDescription: EditText
@@ -27,19 +30,15 @@ class AddWorkoutScreen : Fragment() {
     private lateinit var backButton: Button
 
     private var setCounter = 1 // Counter for added sets
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var currentUserId: Int = 1 // Replace with actual user ID (e.g., from login)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_workout_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_add_workout_screen, container, false)
 
-        // TODO: Initialize UI components
+        // Initialize UI components
         setListContainer = view.findViewById(R.id.set_list_container)
         workoutTitle = view.findViewById(R.id.edit_workout_title)
         workoutDescription = view.findViewById(R.id.edit_workout_description)
@@ -50,6 +49,7 @@ class AddWorkoutScreen : Fragment() {
         // Set up button listeners
         addSetButton.setOnClickListener { addSet() }
         postButton.setOnClickListener { postWorkout() }
+        // TODO: maybe wrong
         backButton.setOnClickListener { requireActivity().onBackPressed() }
 
         return view
@@ -75,43 +75,47 @@ class AddWorkoutScreen : Fragment() {
     }
 
     private fun postWorkout() {
-        val title = workoutTitle.text.toString()
-        val description = workoutDescription.text.toString()
+        val title = workoutTitle.text.toString().trim()
+        val description = workoutDescription.text.toString().trim()
 
         if (title.isEmpty()) {
             Toast.makeText(context, "Please enter a workout title", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Collect set data
-        val sets = mutableListOf<Map<String, String>>()
+        // Collect sets data as a string (you could also enhance this with more structure)
+        val sets = StringBuilder()
         for (i in 0 until setListContainer.childCount) {
             val setView = setListContainer.getChildAt(i)
-            val setTitle = setView.findViewById<EditText>(R.id.edit_set_title).text.toString()
-            val setReps = setView.findViewById<EditText>(R.id.edit_set_reps).text.toString()
-            val setWeight = setView.findViewById<EditText>(R.id.edit_weight).text.toString()
+            val setTitle = setView.findViewById<EditText>(R.id.edit_set_title).text.toString().trim()
+            val setReps = setView.findViewById<EditText>(R.id.edit_set_reps).text.toString().trim()
+            val setWeight = setView.findViewById<EditText>(R.id.edit_weight).text.toString().trim()
 
-            sets.add(
-                mapOf(
-                    "title" to setTitle.ifEmpty { "Set ${i + 1}" },
-                    "reps" to setReps.ifEmpty { "N/A" },
-                    "weight" to setWeight.ifEmpty { "N/A" }
-                )
+            sets.append("Set ${i + 1}: $setTitle, Reps: $setReps, Weight: $setWeight\n")
+        }
+
+        // Add the workout post to the database
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = PostDatabase.getInstance(requireContext())
+            val timestamp = System.currentTimeMillis()
+            val post = Post(
+                userId = currentUserId,
+                title = title,
+                content = "$description\n\n$sets",
+                timestamp = timestamp
             )
-        }
 
-        // TODO: Replace with actual logic for posting
-        // Display the posted workout in a Toast (replace with actual logic for posting)
-        val setsInfo = sets.joinToString("\n") { set ->
-            "Title: ${set["title"]}, Reps: ${set["reps"]}, Weight: ${set["weight"]}"
+            val postId = db.postDao().insertPost(post)
+
+            CoroutineScope(Dispatchers.Main).launch {
+                if (postId > 0) {
+                    Toast.makeText(context, "Workout posted successfully!", Toast.LENGTH_SHORT).show()
+                    // Navigate back to the home screen or update the UI
+                    requireActivity().onBackPressed()
+                } else {
+                    Toast.makeText(context, "Failed to post workout.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-        val message = """
-            Workout Posted!
-            Title: $title
-            Description: $description
-            Sets:
-            $setsInfo
-        """.trimIndent()
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 }

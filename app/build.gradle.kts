@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.paging.common.android)
 
+    implementation(libs.androidx.recyclerview)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
