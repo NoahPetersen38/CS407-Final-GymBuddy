@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/white"
+        android:elevation="4dp" >
+
+        <EditText
+            android:id="@+id/edit_set_title"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/workout_name_txt"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/edit_set_reps"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/sets_x_reps_txt"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/edit_weight"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/weight_txt"
+            android:layout_marginBottom="4dp" />
+    </LinearLayout>

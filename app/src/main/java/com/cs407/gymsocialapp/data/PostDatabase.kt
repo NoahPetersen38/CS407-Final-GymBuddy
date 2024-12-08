@@ -35,7 +35,9 @@ data class Post(
     val userId: Int, // Foreign key reference to User
     val title: String,
     val content: String,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val imageUri: String? = null,
+    val imagePath: String? = null
 )
 
 @Dao
