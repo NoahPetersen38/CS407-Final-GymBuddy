@@ -1,50 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddWorkoutScreen">
 
-    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Record Workout Text and Add Set Button -->
+        <!-- Record Workout Text and Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/record_workout_txt"
-                android:textSize="32sp"
+                android:textSize="28sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/b_add_set"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
                 android:text="@string/b_add_set_txt"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/b_add_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="@string/b_add_pic_txt"
                 android:textSize="20sp"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <!-- set List Container -->
-        <LinearLayout
-            android:id="@+id/set_list_container"
+        <!-- Scrollable Set List Container -->
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"
             android:layout_marginTop="16dp">
-            <!-- sets will be added here -->
-        </LinearLayout>
+
+            <!-- Ensure the ScrollView has a single child -->
+            <LinearLayout
+                android:id="@+id/set_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:contentDescription="Workout sets">
+                <!-- Dynamically added sets will appear here -->
+            </LinearLayout>
+        </ScrollView>
 
         <!-- Workout Title, Description, Post and Back Button -->
         <LinearLayout
@@ -62,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/input_workout_title_txt"
-                android:minHeight="48dp"/>
+                android:minHeight="48dp" />
 
             <EditText
                 android:id="@+id/edit_workout_description"

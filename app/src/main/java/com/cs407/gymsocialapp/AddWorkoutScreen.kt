@@ -83,7 +83,7 @@ class AddWorkoutScreen : Fragment() {
             return
         }
 
-        // Collect sets data as a string (you could also enhance this with more structure)
+        // Collect sets data as a string
         val sets = StringBuilder()
         for (i in 0 until setListContainer.childCount) {
             val setView = setListContainer.getChildAt(i)
@@ -91,7 +91,8 @@ class AddWorkoutScreen : Fragment() {
             val setReps = setView.findViewById<EditText>(R.id.edit_set_reps).text.toString().trim()
             val setWeight = setView.findViewById<EditText>(R.id.edit_weight).text.toString().trim()
 
-            sets.append("Set ${i + 1}: $setTitle, Reps: $setReps, Weight: $setWeight\n")
+            // TODO: changed from i+1 to i
+            sets.append("Set ${i}: $setTitle, Reps: $setReps, Weight: $setWeight\n")
         }
 
         // Add the workout post to the database
