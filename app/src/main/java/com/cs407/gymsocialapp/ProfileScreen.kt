@@ -1,13 +1,28 @@
 package com.cs407.gymsocialapp
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
+
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
@@ -26,12 +41,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ProfileScreen.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ProfileScreen : Fragment() {
+class ProfileScreen() : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var postDatabase: PostDatabase
     private lateinit var calendar: MaterialCalendarView
+    private lateinit var userProfileImage: ImageView
+    private lateinit var settingsButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +56,8 @@ class ProfileScreen : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -46,16 +65,21 @@ class ProfileScreen : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile_screen, container, false)
+
+        // Initialize Variables
+        userProfileImage = view.findViewById(R.id.profile_image)
+        postDatabase = PostDatabase.getInstance(requireContext())
+        settingsButton = view.findViewById(R.id.settingsButton)
+
+        // Now that the view is fully created, we can safely access and modify it
+        calendar = view.findViewById<MaterialCalendarView>(R.id.materialCalendarView)
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        postDatabase = PostDatabase.getInstance(requireContext())
-
-        // Now that the view is fully created, we can safely access and modify it
-        calendar = view.findViewById(R.id.materialCalendarView)
 
         // Get the current date and set it as the selected date
         val currentDate = Calendar.getInstance()
@@ -66,6 +90,12 @@ class ProfileScreen : Fragment() {
         calendar?.setSelectionColor(selectionColor)
 
         highlightPostsOnCalendar()
+
+        // setup settings button
+        settingsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_profile_to_settingsFragment)
+        }
+
     }
 
     private fun findRecentStreak(dates: List<CalendarDay>): List<CalendarDay> {
@@ -152,6 +182,7 @@ class ProfileScreen : Fragment() {
         }
     }
 
+    /**
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -171,4 +202,5 @@ class ProfileScreen : Fragment() {
                 }
             }
     }
+    */
 }

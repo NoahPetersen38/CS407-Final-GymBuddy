@@ -36,7 +36,11 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.cs407.gymsocialapp.ProfileScreen"
-        android:label="Profile" />
+        android:label="Profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signUpScreen"
         android:name="com.cs407.gymsocialapp.SignUpScreen"
@@ -49,4 +53,10 @@
             android:id="@+id/action_signUpScreen_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.cs407.gymsocialapp.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+
 </navigation>
