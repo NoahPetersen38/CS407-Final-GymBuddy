@@ -7,13 +7,6 @@
     android:padding="16dp"
     tools:context=".HomeScreen">
 
-    <!-- recycler view for posting -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp" />
-
     <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -34,7 +27,7 @@
         <EditText
             android:id="@+id/search_bar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:hint="@string/search_usernames"
             android:inputType="text"
@@ -44,7 +37,7 @@
         <ImageButton
             android:id="@+id/search_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:src="@drawable/ic_search"
             android:contentDescription="@string/search"
             android:layout_marginStart="8dp" />

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cs407.gymsocialapp.data.PostDatabase
@@ -46,7 +47,7 @@ class HomeScreen : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
 
-        recyclerView = view.findViewById(R.id.recycler_view)
+        recyclerView = view.findViewById(R.id.following_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         fetchPosts()
@@ -57,26 +58,21 @@ class HomeScreen : Fragment() {
 
 
     private fun fetchPosts() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val db = PostDatabase.getInstance(requireContext())
-            val posts = db.postDao().getAllPosts() // Fetch all posts
-
-            // Map each Post to a Pair<Post, String> with its username
+            val posts = db.postDao().getAllPosts()
             val postsWithUsernames = posts.map { post ->
-                val user = db.userDao().getUserById(post.userId) // Fetch user for each post
-                Pair(post, user?.username ?: "Unknown User") // Pair Post with username
+                val user = db.userDao().getUserById(post.userId)
+                Pair(post, user?.username ?: "Unknown User")
             }
-
-            CoroutineScope(Dispatchers.Main).launch {
-                postAdapter = PostAdapter(postsWithUsernames) // Pass List<Pair<Post, String>> to adapter
-                recyclerView.adapter = postAdapter
-            }
+            postAdapter = PostAdapter(postsWithUsernames)
+            recyclerView.adapter = postAdapter
         }
     }
 
 
 
-    companion object {
+    /*companion object {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -94,5 +90,5 @@ class HomeScreen : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
+    } */
 }

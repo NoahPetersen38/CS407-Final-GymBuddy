@@ -111,7 +111,7 @@ class AddWorkoutScreen : Fragment() {
                 if (postId > 0) {
                     Toast.makeText(context, "Workout posted successfully!", Toast.LENGTH_SHORT).show()
                     // Navigate back to the home screen or update the UI
-                    requireActivity().onBackPressed()
+                    // requireActivity().onBackPressed()
                 } else {
                     Toast.makeText(context, "Failed to post workout.", Toast.LENGTH_SHORT).show()
                 }

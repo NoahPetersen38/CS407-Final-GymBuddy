@@ -1,5 +1,6 @@
 package com.cs407.gymsocialapp
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,7 @@ class PostAdapter(private val postsWithUsernames: List<Pair<Post, String>>) :
         val title: TextView = view.findViewById(R.id.post_title)
         val timestamp: TextView = view.findViewById(R.id.post_timestamp)
         val content: TextView = view.findViewById(R.id.post_content)
-        val username: TextView = view.findViewById(R.id.post_username) // Add a TextView for username
+        val username: TextView = view.findViewById(R.id.post_username)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -26,6 +27,8 @@ class PostAdapter(private val postsWithUsernames: List<Pair<Post, String>>) :
         return PostViewHolder(view)
     }
 
+    // maybe no suppress
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val (post, username) = postsWithUsernames[position]
         holder.title.text = post.title
