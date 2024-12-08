@@ -47,7 +47,7 @@ class HomeScreen : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
 
-        recyclerView = view.findViewById(R.id.following_recycler_view)
+        recyclerView = view.findViewById(R.id.your_workouts_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         fetchPosts()
