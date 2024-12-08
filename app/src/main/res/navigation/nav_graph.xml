@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.cs407.gymsocialapp.ui.HomeScreen"
+        android:name="com.cs407.gymsocialapp.HomeScreen"
         android:label="Home" />
     <fragment
         android:id="@+id/navigation_add_workout"
