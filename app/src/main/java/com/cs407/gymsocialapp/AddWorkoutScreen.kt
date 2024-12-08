@@ -28,7 +28,7 @@ class AddWorkoutScreen : Fragment() {
     private lateinit var workoutDescription: EditText
     private lateinit var addSetButton: Button
     private lateinit var postButton: Button
-    private lateinit var backButton: Button
+    // private lateinit var backButton: Button
 
     private var setCounter = 1 // Counter for added sets
 
