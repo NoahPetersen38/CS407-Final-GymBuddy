@@ -55,6 +55,8 @@
     <string name="search">Search</string>
     <string name="motivational_image_desc">Motivational Image</string>
     <string name="search_usernames">Search usernames</string>
+    <string name="following">Following</string>
+    <string name="your_workouts">Your Workouts</string>
 
 
 </resources>
