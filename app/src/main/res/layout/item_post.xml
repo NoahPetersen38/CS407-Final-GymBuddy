@@ -7,23 +7,35 @@
 
     <TextView
         android:id="@+id/post_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="Post Title" />
 
     <TextView
-        android:id="@+id/post_content"
-        android:layout_width="wrap_content"
+        android:id="@+id/post_username"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        android:textColor="@android:color/secondary_text_dark"
+        android:text="Posted by Username" />
 
     <TextView
         android:id="@+id/post_timestamp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:text="Post Date" />
+
+    <TextView
+        android:id="@+id/post_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textSize="12sp"
-        android:textColor="@android:color/darker_gray" />
+        android:textSize="16sp"
+        android:text="Post Content" />
 </LinearLayout>

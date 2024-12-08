@@ -5,6 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.cs407.gymsocialapp.data.PostDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,6 +23,10 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class HomeScreen : Fragment() {
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var postAdapter: PostAdapter
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -34,8 +44,37 @@ class HomeScreen : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
+
+        recyclerView = view.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        fetchPosts()
+
+        return view
     }
+
+
+
+    private fun fetchPosts() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = PostDatabase.getInstance(requireContext())
+            val posts = db.postDao().getAllPosts() // Fetch all posts
+
+            // Map each Post to a Pair<Post, String> with its username
+            val postsWithUsernames = posts.map { post ->
+                val user = db.userDao().getUserById(post.userId) // Fetch user for each post
+                Pair(post, user?.username ?: "Unknown User") // Pair Post with username
+            }
+
+            CoroutineScope(Dispatchers.Main).launch {
+                postAdapter = PostAdapter(postsWithUsernames) // Pass List<Pair<Post, String>> to adapter
+                recyclerView.adapter = postAdapter
+            }
+        }
+    }
+
+
 
     companion object {
         /**
