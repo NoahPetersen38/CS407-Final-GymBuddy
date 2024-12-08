@@ -1,25 +1,35 @@
 package com.cs407.gymsocialapp
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Environment
+import android.os.Parcelable
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import com.cs407.gymsocialapp.data.Post
 import com.cs407.gymsocialapp.data.PostDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Locale
-
-
-
+import java.util.*
 
 class AddWorkoutScreen : Fragment() {
 
@@ -28,12 +38,17 @@ class AddWorkoutScreen : Fragment() {
     private lateinit var workoutDescription: EditText
     private lateinit var addSetButton: Button
     private lateinit var postButton: Button
-    // private lateinit var backButton: Button
+    private lateinit var addPhotoButton: Button
+    private lateinit var imagePreview: ImageView
 
     private var setCounter = 1 // Counter for added sets
 
-    // TODO: ???
-    private var currentUserId: Int = 1 // Replace with actual user ID (from login)
+    // Placeholder for currentUserId, replace with actual user ID logic
+    private var currentUserId: Int = 1
+
+    private val REQUEST_CAMERA = 101
+    private lateinit var imageView: ImageView
+    private var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,13 +62,15 @@ class AddWorkoutScreen : Fragment() {
         workoutDescription = view.findViewById(R.id.edit_workout_description)
         addSetButton = view.findViewById(R.id.b_add_set)
         postButton = view.findViewById(R.id.b_post)
-        //backButton = view.findViewById(R.id.b_back)
+        addPhotoButton = view.findViewById(R.id.b_add_photo)
+        imagePreview = view.findViewById(R.id.image_preview)
+        //imageView = view.findViewById(R.id.image_view)
+
 
         // Set up button listeners
         addSetButton.setOnClickListener { addSet() }
         postButton.setOnClickListener { postWorkout() }
-        // TODO: maybe wrong - get rid of back button
-        //backButton.setOnClickListener { requireActivity().onBackPressed() }
+        addPhotoButton.setOnClickListener { checkPermissions() }
 
         return view
     }
@@ -100,11 +117,15 @@ class AddWorkoutScreen : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val db = PostDatabase.getInstance(requireContext())
             val timestamp = System.currentTimeMillis()
+            val postContent = "$description\n\n$sets"
+
             val post = Post(
                 userId = currentUserId,
                 title = title,
-                content = "$description\n\n$sets",
-                timestamp = timestamp
+                content = postContent,
+                timestamp = timestamp,
+                imageUri = imageUri?.toString(), // Save the image URI if a photo is added
+                imagePath = imageUri?.path
             )
 
             val postId = db.postDao().insertPost(post)
@@ -130,5 +151,40 @@ class AddWorkoutScreen : Fragment() {
 
         // Reset the set counter
         setCounter = 1
+
+        // Clear image preview
+        imagePreview.setImageURI(null)
+    }
+
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 100)
+        } else {
+            openCamera()
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+        // Creating a file to store the image
+        val file = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "workout_image.jpg")
+
+        // Getting the URI for the file using FileProvider
+        imageUri = FileProvider.getUriForFile(requireContext(), "com.cs407.gymsocialapp.fileprovider", file)
+
+        // Passing the URI to the intent as a Parcelable
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri as Parcelable)  // Explicitly cast to Parcelable
+
+        // Starting the camera activity
+        startActivityForResult(intent, REQUEST_CAMERA)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            // Display the captured image
+            imagePreview.setImageURI(imageUri)
+        }
     }
 }
