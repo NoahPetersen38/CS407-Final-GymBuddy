@@ -49,7 +49,6 @@
             android:layout_weight="1"
             android:layout_marginTop="16dp">
 
-            <!-- Ensure the ScrollView has a single child -->
             <LinearLayout
                 android:id="@+id/set_list_container"
                 android:layout_width="match_parent"

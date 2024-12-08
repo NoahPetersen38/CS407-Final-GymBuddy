@@ -12,7 +12,7 @@ import java.util.Date
 import java.util.Locale
 
 // Adapter class for RecyclerView
-class PostAdapter(private val postsWithUsernames: List<Pair<Post, String>>) :
+class PostAdapter(private var postsWithUsernames: List<Pair<Post, String>>) :
     RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,20 +27,22 @@ class PostAdapter(private val postsWithUsernames: List<Pair<Post, String>>) :
         return PostViewHolder(view)
     }
 
-    // maybe no suppress
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val (post, username) = postsWithUsernames[position]
         holder.title.text = post.title
         holder.content.text = post.content
         holder.username.text = "Posted by: $username"
 
-        // Format the timestamp
         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         holder.timestamp.text = dateFormat.format(Date(post.timestamp))
     }
 
     override fun getItemCount(): Int {
         return postsWithUsernames.size
+    }
+
+    fun updateData(newPostsWithUsernames: List<Pair<Post, String>>) {
+        postsWithUsernames = newPostsWithUsernames
+        notifyDataSetChanged()
     }
 }

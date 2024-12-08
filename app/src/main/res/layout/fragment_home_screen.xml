@@ -16,6 +16,13 @@
         android:layout_marginBottom="16dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <!-- ADDED FOR TESTING -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+
     <!-- Search bar at the top -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,7 +50,7 @@
             android:layout_marginStart="8dp" />
     </LinearLayout>
 
-    <!-- Scrollable content -->
+    <!-- Scrollable content
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -56,7 +63,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Motivational picture -->
+            <!- Motivational picture
             <ImageView
                 android:id="@+id/motivational_image"
                 android:layout_width="match_parent"
@@ -66,7 +73,7 @@
                 android:contentDescription="@string/motivational_image_desc"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Following section -->
+            <!- Following section
             <TextView
                 android:id="@+id/following_section_title"
                 android:layout_width="match_parent"
@@ -82,7 +89,7 @@
                 android:layout_marginBottom="24dp"
                 android:scrollbars="vertical" />
 
-            <!-- Your Workouts section -->
+            <!- Your Workouts section
             <TextView
                 android:id="@+id/your_workouts_section_title"
                 android:layout_width="match_parent"
@@ -98,7 +105,17 @@
                 android:layout_marginBottom="24dp"
                 android:scrollbars="vertical" />
         </LinearLayout>
-    </ScrollView>
+    </ScrollView> -->
+
+
+        <!-- RecyclerView for all posts, ADDED FOR TESTING -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/following_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical" />
+    </LinearLayout>
 
     <!-- Bottom toolbar -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.cs407.gymsocialapp.data.Post
 import com.cs407.gymsocialapp.data.PostDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,9 @@ class AddWorkoutScreen : Fragment() {
     private lateinit var backButton: Button
 
     private var setCounter = 1 // Counter for added sets
-    private var currentUserId: Int = 1 // Replace with actual user ID (e.g., from login)
+
+    // TODO: ???
+    private var currentUserId: Int = 1 // Replace with actual user ID (from login)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,20 +47,21 @@ class AddWorkoutScreen : Fragment() {
         workoutDescription = view.findViewById(R.id.edit_workout_description)
         addSetButton = view.findViewById(R.id.b_add_set)
         postButton = view.findViewById(R.id.b_post)
-        backButton = view.findViewById(R.id.b_back)
+        //backButton = view.findViewById(R.id.b_back)
 
         // Set up button listeners
         addSetButton.setOnClickListener { addSet() }
         postButton.setOnClickListener { postWorkout() }
-        // TODO: maybe wrong
-        backButton.setOnClickListener { requireActivity().onBackPressed() }
+        // TODO: maybe wrong - get rid of back button
+        //backButton.setOnClickListener { requireActivity().onBackPressed() }
 
         return view
     }
 
     private fun addSet() {
         // Inflate a new set view
-        val setView = LayoutInflater.from(context).inflate(R.layout.item_workout, setListContainer, false)
+        val setView =
+            LayoutInflater.from(context).inflate(R.layout.item_workout, setListContainer, false)
 
         // Find and configure set fields
         val setTitle = setView.findViewById<EditText>(R.id.edit_set_title)
@@ -83,7 +87,6 @@ class AddWorkoutScreen : Fragment() {
             return
         }
 
-        // Collect sets data as a string
         val sets = StringBuilder()
         for (i in 0 until setListContainer.childCount) {
             val setView = setListContainer.getChildAt(i)
@@ -91,11 +94,9 @@ class AddWorkoutScreen : Fragment() {
             val setReps = setView.findViewById<EditText>(R.id.edit_set_reps).text.toString().trim()
             val setWeight = setView.findViewById<EditText>(R.id.edit_weight).text.toString().trim()
 
-            // TODO: changed from i+1 to i
-            sets.append("Set ${i}: $setTitle, Reps: $setReps, Weight: $setWeight\n")
+            sets.append("Set ${i + 1}: $setTitle, Reps: $setReps, Weight: $setWeight\n")
         }
 
-        // Add the workout post to the database
         CoroutineScope(Dispatchers.IO).launch {
             val db = PostDatabase.getInstance(requireContext())
             val timestamp = System.currentTimeMillis()
@@ -111,12 +112,23 @@ class AddWorkoutScreen : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 if (postId > 0) {
                     Toast.makeText(context, "Workout posted successfully!", Toast.LENGTH_SHORT).show()
-                    // Navigate back to the home screen or update the UI
-                    // requireActivity().onBackPressed()
+                    resetFields() // Clear fields after successful post
                 } else {
                     Toast.makeText(context, "Failed to post workout.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+
+    private fun resetFields() {
+        // Clear the workout title and description
+        workoutTitle.text.clear()
+        workoutDescription.text.clear()
+
+        // Remove all dynamically added set views
+        setListContainer.removeAllViews()
+
+        // Reset the set counter
+        setCounter = 1
     }
 }

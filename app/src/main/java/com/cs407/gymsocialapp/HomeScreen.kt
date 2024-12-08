@@ -56,8 +56,7 @@ class HomeScreen : Fragment() {
     }
 
 
-
-    private fun fetchPosts() {
+    fun fetchPosts() {
         viewLifecycleOwner.lifecycleScope.launch {
             val db = PostDatabase.getInstance(requireContext())
             val posts = db.postDao().getAllPosts()
@@ -65,9 +64,19 @@ class HomeScreen : Fragment() {
                 val user = db.userDao().getUserById(post.userId)
                 Pair(post, user?.username ?: "Unknown User")
             }
-            postAdapter = PostAdapter(postsWithUsernames)
-            recyclerView.adapter = postAdapter
+
+            if (!::postAdapter.isInitialized) {
+                postAdapter = PostAdapter(postsWithUsernames)
+                recyclerView.adapter = postAdapter
+            } else {
+                postAdapter.updateData(postsWithUsernames)
+            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchPosts() // Fetch posts every time HomeScreen is resumed
     }
 
 
