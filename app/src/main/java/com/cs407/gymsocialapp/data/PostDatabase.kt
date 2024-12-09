@@ -56,6 +56,9 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE username = :username")
     suspend fun login(username: String): User?
+
+    @Query("SELECT * FROM users WHERE username LIKE :username")
+    suspend fun searchUsersByUsername(username: String): List<User>
 }
 
 @Dao
