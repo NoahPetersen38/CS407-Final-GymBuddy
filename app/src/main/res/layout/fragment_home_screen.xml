@@ -4,117 +4,109 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".HomeScreen">
 
-    <!-- Top App Bar -->
+    <!-- Top App Bar with Search Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:layout_marginBottom="16dp"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <!-- ADDED FOR TESTING -->
+        <!-- Search Bar inside the App Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:layout_gravity="center">
+
+            <EditText
+                android:id="@+id/search_bar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="@string/search_usernames"
+                android:inputType="text"
+                android:background="@color/design_default_color_background"
+                android:padding="8dp"
+                android:textColor="@android:color/black"/>
+
+            <ImageButton
+                android:id="@+id/search_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_search"
+                android:contentDescription="@string/search"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!-- Content Layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_marginTop="56dp"> <!-- Space for the app bar -->
 
-    <!-- Search bar at the top -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp">
-
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:hint="@string/search_usernames"
-            android:inputType="text"
-            android:background="@color/design_default_color_background"
-            android:padding="8dp" />
-
-        <ImageButton
-            android:id="@+id/search_button"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_search"
-            android:contentDescription="@string/search"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
-
-    <!-- Scrollable content
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:layout_below="@id/search_bar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!- Motivational picture
-            <ImageView
-                android:id="@+id/motivational_image"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:src="@drawable/motivational_image"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/motivational_image_desc"
-                android:layout_marginBottom="24dp" />
-
-            <!- Following section
-            <TextView
-                android:id="@+id/following_section_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Following"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_marginBottom="8dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/following_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:scrollbars="vertical" />
-
-            <!- Your Workouts section
-            <TextView
-                android:id="@+id/your_workouts_section_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Your Workouts"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_marginBottom="8dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/your_workouts_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:scrollbars="vertical" />
-        </LinearLayout>
-    </ScrollView> -->
-
-
-        <!-- RecyclerView for all posts, ADDED FOR TESTING -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/following_recycler_view"
+        <!-- Scrollable Content -->
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:scrollbars="vertical" />
+            android:fillViewport="true"
+            android:layout_marginTop="16dp"> <!-- Add space above the content -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Motivational Image -->
+                <ImageView
+                    android:id="@+id/motivational_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:src="@drawable/motivational_image"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/motivational_image_desc"
+                    android:layout_marginBottom="24dp" />
+
+                <!-- Following Section -->
+                <TextView
+                    android:id="@+id/following_section_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/following"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:layout_marginBottom="8dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/following_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:scrollbars="vertical" />
+
+                <!-- Your Workouts Section -->
+                <TextView
+                    android:id="@+id/your_workouts_section_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/your_workouts"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:layout_marginBottom="8dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/your_workouts_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
     <!-- Bottom toolbar -->
@@ -123,7 +115,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu"
-        android:layout_marginTop="16dp" />
+        app:menu="@menu/bottom_nav_menu" />
 
 </FrameLayout>

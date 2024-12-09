@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,13 +33,6 @@
                 android:text="@string/b_add_set_txt"
                 android:textSize="20sp" />
 
-            <Button
-                android:id="@+id/b_add_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="@string/b_add_pic_txt"
-                android:textSize="20sp"
-                android:layout_marginStart="8dp" />
         </LinearLayout>
 
         <!-- Scrollable Set List Container -->
@@ -86,6 +79,33 @@
                 android:gravity="top"
                 android:minHeight="100dp" />
 
+            <!-- Add Photo Button -->
+            <Button
+                android:id="@+id/b_add_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="@string/b_add_pic_txt"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center"/>
+
+            <!-- Image Preview -->
+            <ImageView
+                android:id="@+id/image_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="Captured image" />
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:contentDescription="Captured Image"
+                android:layout_marginBottom="8dp"
+                android:scaleType="centerCrop"/>
+
             <Button
                 android:id="@+id/b_post"
                 android:layout_width="match_parent"
@@ -103,4 +123,4 @@
                 android:layout_marginTop="8dp" />
         </LinearLayout>
     </LinearLayout>
-</FrameLayout>
+</ScrollView>

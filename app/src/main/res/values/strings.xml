@@ -3,7 +3,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!-- Strings related to login -->
-    <string name ="welcome_text">Welcome to Gym Buddy!</string>
+    <string name="welcome_text">Welcome to Gym Buddy!</string>
     <string name="welcome_subtext">Please Log In:</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -38,6 +38,7 @@
     <string name="b_create_post_txt">+</string>
     <string name="b_mygymbuds_txt">MyGymBuds</string>
     <string name="profile_image">Profile Image</string>
+    <string name="settings">Settings</string>
     <!-- Strings related to workout screen -->
     <string name="record_workout_txt">Record Workout</string>
     <string name="b_add_set_txt">+ Set</string>
@@ -48,13 +49,15 @@
     <string name="b_back_workout_txt">Back</string>
     <string name="b_add_pic_txt">+Photo</string>
     <!-- Strings related to item_workout screen -->
-        <string name="workout_name_txt">Workout Name:</string>
-        <string name="sets_x_reps_txt">Sets X RepsL</string>
-        <string name="weight_txt">Weight:</string>
+    <string name="workout_name_txt">Workout Name:</string>
+    <string name="sets_x_reps_txt">Sets X RepsL</string>
+    <string name="weight_txt">Weight:</string>
     <!-- Strings related to Home Screen -->
     <string name="search">Search</string>
     <string name="motivational_image_desc">Motivational Image</string>
     <string name="search_usernames">Search usernames</string>
+    <string name="following">Following</string>
+    <string name="your_workouts">Your Workouts</string>
 
 
 </resources>
