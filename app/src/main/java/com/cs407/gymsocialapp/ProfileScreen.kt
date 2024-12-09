@@ -29,6 +29,8 @@ import com.cs407.gymsocialapp.data.PostDatabase
 import java.io.File
 import androidx.core.content.FileProvider
 import android.Manifest
+import android.widget.ImageButton
+import androidx.navigation.fragment.findNavController
 import com.cs407.gymsocialapp.data.LoginDataSource
 import java.util.*
 
@@ -58,6 +60,9 @@ class ProfileScreen : Fragment() {
     private var photoUri: Uri? = null
     private lateinit var loginRepository: LoginRepository
 
+    //settings
+    private lateinit var settingsButton: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // profile pic pic
@@ -82,6 +87,7 @@ class ProfileScreen : Fragment() {
                 }
             }
         }
+        setHasOptionsMenu(true)
     }
 
 
@@ -91,25 +97,25 @@ class ProfileScreen : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile_screen, container, false)
+
+        // Initialize UI components
+        profileImageView = view.findViewById(R.id.profile_image)
+        usernameTextView = view.findViewById(R.id.profile_username)
+        settingsButton = view.findViewById(R.id.settingsButton)
+        calendar = view.findViewById(R.id.materialCalendarView)
+        postDatabase = PostDatabase.getInstance(requireContext())
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val loginDataSource = LoginDataSource() // Replace with actual data source
+        // log in
+        val loginDataSource = LoginDataSource()
         loginRepository = LoginRepository(loginDataSource)
-
-            // calendar
-        postDatabase = PostDatabase.getInstance(requireContext())
-
-        // Now that the view is fully created, we can safely access and modify it
-        calendar = view.findViewById(R.id.materialCalendarView)
-
-        // profile pic, username
-        profileImageView = view.findViewById(R.id.profile_image)
-        usernameTextView = view.findViewById(R.id.profile_username)
 
         // Fetch and display the logged-in username
         val username = getLoggedInUsername()
@@ -124,15 +130,21 @@ class ProfileScreen : Fragment() {
             }
         }
 
+        // setup settings button
+        settingsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_profile_to_settingsFragment)
+        }
+
         // Get the current date and set it as the selected date
         val currentDate = Calendar.getInstance()
-        calendar?.selectedDate = CalendarDay.from(currentDate.time)
+        calendar.selectedDate = CalendarDay.from(currentDate.time)
 
         // Set the selection color
         val selectionColor = ContextCompat.getColor(requireContext(), com.google.android.material.R.color.material_dynamic_neutral90)
-        calendar?.setSelectionColor(selectionColor)
+        calendar.setSelectionColor(selectionColor)
 
         highlightPostsOnCalendar()
+
     }
 
 
