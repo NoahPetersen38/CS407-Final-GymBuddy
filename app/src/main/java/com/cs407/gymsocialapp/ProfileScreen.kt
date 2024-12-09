@@ -1,19 +1,35 @@
 package com.cs407.gymsocialapp
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.cs407.gymsocialapp.data.LoginRepository
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.coroutines.launch
 import com.cs407.gymsocialapp.data.PostDatabase
+import java.io.File
+import androidx.core.content.FileProvider
+import android.Manifest
+import com.cs407.gymsocialapp.data.LoginDataSource
 import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,16 +46,45 @@ class ProfileScreen : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
     private lateinit var postDatabase: PostDatabase
     private lateinit var calendar: MaterialCalendarView
+    // for prof picture and username
+    private lateinit var profileImageView: ImageView
+    private lateinit var usernameTextView: TextView
+
+    private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
+    private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
+    private var photoUri: Uri? = null
+    private lateinit var loginRepository: LoginRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        // profile pic pic
+        // camera and photo library launchers
+        cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                photoUri?.let {
+                    profileImageView.setImageURI(it)
+                } ?: run {
+                    Toast.makeText(requireContext(), "Failed to capture image", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri: Uri? = result.data?.data
+                if (imageUri != null) {
+                    profileImageView.setImageURI(imageUri)
+                } else {
+                    Toast.makeText(requireContext(), "Failed to select image", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,10 +97,32 @@ class ProfileScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val loginDataSource = LoginDataSource() // Replace with actual data source
+        loginRepository = LoginRepository(loginDataSource)
+
+            // calendar
         postDatabase = PostDatabase.getInstance(requireContext())
 
         // Now that the view is fully created, we can safely access and modify it
         calendar = view.findViewById(R.id.materialCalendarView)
+
+        // profile pic, username
+        profileImageView = view.findViewById(R.id.profile_image)
+        usernameTextView = view.findViewById(R.id.profile_username)
+
+        // Fetch and display the logged-in username
+        val username = getLoggedInUsername()
+        usernameTextView.text = username
+
+        // Set up profile picture click listener
+        profileImageView.setOnClickListener {
+            if (checkPermissions()) {
+                showImagePickerOptions()
+            } else {
+                requestPermissions()
+            }
+        }
 
         // Get the current date and set it as the selected date
         val currentDate = Calendar.getInstance()
@@ -66,6 +133,79 @@ class ProfileScreen : Fragment() {
         calendar?.setSelectionColor(selectionColor)
 
         highlightPostsOnCalendar()
+    }
+
+
+    private fun getLoggedInUsername(): String {
+        val loggedInUser = loginRepository.user
+        return loggedInUser?.displayName ?: ""
+    }
+
+    private fun showImagePickerOptions() {
+        Toast.makeText(requireContext(), "Image picker options shown", Toast.LENGTH_SHORT).show()
+        val options = arrayOf("Take Photo", "Choose from Gallery")
+        val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        builder.setTitle("Update Profile Picture")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> openCamera()
+                    1 -> openGallery()
+                }
+            }
+            .show()
+    }
+
+    private fun openCamera() {
+        val photoFile = createImageFile()
+        photoUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", photoFile)
+
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+        }
+        cameraLauncher.launch(cameraIntent)
+    }
+
+    private fun createImageFile(): File {
+        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "profile_${System.currentTimeMillis()}",
+            ".jpg",
+            storageDir
+        )
+    }
+
+    private fun openGallery() {
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryLauncher.launch(galleryIntent)
+    }
+
+    private fun checkPermissions(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(Manifest.permission.CAMERA),
+            PERMISSION_REQUEST_CODE
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(requireContext(), "Camera permission granted", Toast.LENGTH_SHORT).show()
+                showImagePickerOptions()
+            } else {
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun findRecentStreak(dates: List<CalendarDay>): List<CalendarDay> {
@@ -153,22 +293,7 @@ class ProfileScreen : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileScreen.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileScreen().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        private const val PERMISSION_REQUEST_CODE = 1001
     }
+
 }
