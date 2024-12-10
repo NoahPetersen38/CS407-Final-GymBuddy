@@ -67,7 +67,8 @@ class ProfileScreen : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // profile pic pic
+        // profile pic
+
         // camera and photo library launchers
         cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -115,14 +116,6 @@ class ProfileScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        // log in
-        val loginDataSource = LoginDataSource()
-        loginRepository = LoginRepository(loginDataSource)
-
-        // Fetch and display the logged-in username
-        val username = getLoggedInUsername()
-        usernameTextView.text = username
-
         // Set up profile picture click listener
         profileImageView.setOnClickListener {
             if (checkPermissions()) {
@@ -147,12 +140,6 @@ class ProfileScreen : Fragment() {
 
         highlightPostsOnCalendar()
 
-    }
-
-
-    private fun getLoggedInUsername(): String {
-        val loggedInUser = loginRepository.user
-        return loggedInUser?.displayName ?: ""
     }
 
     private fun showImagePickerOptions() {

@@ -27,6 +27,7 @@ data class User(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val username: String,
     val email: String,
+    val profilePictureUri: String? = null // New column
 )
 
 @Entity(tableName = "posts")
