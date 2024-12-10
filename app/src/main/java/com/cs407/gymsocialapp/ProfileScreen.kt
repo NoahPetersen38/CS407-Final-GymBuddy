@@ -276,7 +276,7 @@ class ProfileScreen : Fragment() {
 
                     override fun decorate(view: DayViewFacade?) {
                         // Customize the highlight (e.g., use a background color)
-                        ContextCompat.getDrawable(requireContext(), com.google.android.material.R.color.material_dynamic_neutral20)
+                        ContextCompat.getDrawable(requireContext(), R.drawable.circle_background)
                             ?.let {
                                 view?.setBackgroundDrawable(
                                     it
