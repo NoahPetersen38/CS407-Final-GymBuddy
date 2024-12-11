@@ -140,6 +140,14 @@ class SignUpScreen : Fragment() {
                                 val newUser = User(username = user, email = email)
                                 appDB.userDao().insertUser(newUser)
 
+                                val newUserTest: User? = appDB.userDao().login(user)
+                                if (newUserTest != null) {
+                                    Log.d("New user id", newUserTest.id.toString())
+                                } else {
+                                    Log.d("New user issue", "you're fucked")
+                                }
+
+
                                 // Hash password and store in SharedPreferences for future logins
                                 val hashedPasswd = hash(passwd)
                                 val editor = userPasswdKV.edit()
