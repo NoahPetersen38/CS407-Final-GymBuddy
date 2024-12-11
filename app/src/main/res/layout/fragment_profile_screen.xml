@@ -27,7 +27,7 @@
                 android:layout_gravity="right|center_horizontal"
                 android:background="#00FFFFFF"
                 android:contentDescription="@string/settings"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 android:src="@drawable/baseline_settings_24" />
 
             <androidx.cardview.widget.CardView
@@ -108,13 +108,6 @@
             </LinearLayout>
 
             <!-- Edit Profile Button -->
-            <Button
-                android:id="@+id/b_edit_profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:onClick="editProfile"
-                android:text="@string/b_edit_prof_txt" />
 
             <!-- Calendar and Buttons Wrapper -->
             <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"

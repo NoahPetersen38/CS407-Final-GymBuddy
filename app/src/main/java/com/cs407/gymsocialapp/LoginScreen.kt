@@ -48,7 +48,7 @@ class LoginScreen() : Fragment() {
 
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
-        userPasswdKV = requireContext().getSharedPreferences(
+        userPasswdKV = requireActivity().getSharedPreferences(
             getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
 
         appDB = PostDatabase.getInstance(requireContext())
@@ -88,16 +88,23 @@ class LoginScreen() : Fragment() {
                         // navigate with successful login
                         if(success) {
                             val hashedPW = hash(passwd)
+
+                            // Get id of new User to insert into ViewModel
+                            val newUserTest: User? = appDB.userDao().login(user)
+                            var id = 0
+                            if (newUserTest != null) {
+                                id = newUserTest.id
+                            }
+
+                            Log.d("user ID", id.toString())
                             // set the newly logged-in user to the viewModel
                             userViewModel.setUser(UserState(
-                                0,
+                                id,
                                 user,
                                 hashedPW))
                             findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
                             findNavController().navigate(R.id.action_mainFragment_to_navigation_home)
                         }
-
-                        Log.d("username in VM", userViewModel.userState.value.name)
 
 
                     } catch (e: Exception) {

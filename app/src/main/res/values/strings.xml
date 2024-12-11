@@ -76,5 +76,7 @@
     <string name="EditPassword">Enter new Password</string>
     <string name="ConfirmEditPassword">Confirm new Password</string>
     <string name="cancelButton">Cancel</string>
+    <string name="backButton">Back</string>
+    <string name="logoutButton">Log Out</string>
 
 </resources>

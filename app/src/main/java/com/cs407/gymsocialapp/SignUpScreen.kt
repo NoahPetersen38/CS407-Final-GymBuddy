@@ -57,7 +57,7 @@ class SignUpScreen : Fragment() {
         toLogInButton = view.findViewById<Button>(R.id.to_log_in_button)
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
-        userPasswdKV = requireContext().getSharedPreferences(
+        userPasswdKV = requireActivity().getSharedPreferences(
             getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
 
         appDB = PostDatabase.getInstance(requireContext())
@@ -140,11 +140,11 @@ class SignUpScreen : Fragment() {
                                 val newUser = User(username = user, email = email)
                                 appDB.userDao().insertUser(newUser)
 
+                                // Get id of new User to insert into ViewModel
                                 val newUserTest: User? = appDB.userDao().login(user)
+                                var id = 0
                                 if (newUserTest != null) {
-                                    Log.d("New user id", newUserTest.id.toString())
-                                } else {
-                                    Log.d("New user issue", "you're fucked")
+                                    id = newUserTest.id
                                 }
 
 
@@ -155,7 +155,7 @@ class SignUpScreen : Fragment() {
 
                                 // Set the newly created user in ViewModel
                                 userViewModel.setUser(
-                                    UserState(0, user, hashedPasswd)
+                                    UserState(id, user, hashedPasswd)
                                 )
 
                                 // account created - go to home screen

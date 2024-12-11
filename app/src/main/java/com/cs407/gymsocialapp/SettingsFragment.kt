@@ -12,15 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.cs407.gymsocialapp.data.PostDatabase
 import com.cs407.gymsocialapp.data.User
-import com.cs407.gymsocialapp.data.model.LoggedInUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +35,9 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class SettingsFragment : Fragment() {
+
+    private lateinit var backButton: ImageButton
+    private lateinit var logoutButton: Button
 
     private lateinit var changeNameButton: Button
     private lateinit var firstET: EditText
@@ -65,6 +66,9 @@ class SettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
         // Initialize variables
+        backButton = view.findViewById<ImageButton>(R.id.backButton)
+        logoutButton = view.findViewById<Button>(R.id.logoutButton)
+
         changeNameButton = view.findViewById<Button>(R.id.changeNameButton)
         firstET = view.findViewById<EditText>(R.id.editTextFirst)
         lastET = view.findViewById<EditText>(R.id.editTextLast)
@@ -81,7 +85,7 @@ class SettingsFragment : Fragment() {
         submitButton = view.findViewById<Button>(R.id.submitButton)
 
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
-        userPasswdKV = requireContext().getSharedPreferences(
+        userPasswdKV = requireActivity().getSharedPreferences(
             getString(R.string.userPasswdKV), Context.MODE_PRIVATE
         )
         appDB = PostDatabase.getInstance(requireContext())
@@ -91,6 +95,15 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // logic for back and logout buttons
+        backButton.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_navigation_profile)
+        }
+        logoutButton.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_loginFragment)
+
+        }
 
         // make EditTexts visible/invisible on the press of each button
         changeNameButton.setOnClickListener {
@@ -158,6 +171,7 @@ class SettingsFragment : Fragment() {
             if (firstET.visibility == View.VISIBLE) {
                 val newFirst = firstET.text.toString().trim()
                 val newLast = lastET.text.toString().trim()
+
                 // check for valid inputs
                 if (newFirst.isEmpty() || newLast.isEmpty()) {
                     Toast.makeText(
@@ -185,7 +199,7 @@ class SettingsFragment : Fragment() {
                 val newConfirmEmail = confirmEmailET.text.toString().trim()
 
                 // Check for valid inputs
-                if(newEmail.isEmpty() || newConfirmEmail.isEmpty()) {
+                if (newEmail.isEmpty() || newConfirmEmail.isEmpty()) {
                     Toast.makeText(
                         this.context,
                         "Please fill email fields or press \'cancel\'",
@@ -204,10 +218,15 @@ class SettingsFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else { // valid inputs - update email
+
                     lifecycleScope.launch {
+
+                        // update Database
                         val username = userViewModel.userState.value.name
-                        val updatedUser = User(username = username, email = newEmail)
+                        val id = userViewModel.userState.value.id
+                        val updatedUser = User(id = id, username = username, email = newEmail)
                         appDB.userDao().updateUser(updatedUser)
+
                     }
                     Toast.makeText(
                         this.context,
@@ -225,7 +244,7 @@ class SettingsFragment : Fragment() {
                 if (newUser.isEmpty() || newUserConfirm.isEmpty()) {
                     Toast.makeText(
                         this.context,
-                        "Please fill email fields or press \'cancel\'",
+                        "Please fill username fields or press \'cancel\'",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else if (newUser != newUserConfirm) {
@@ -236,27 +255,49 @@ class SettingsFragment : Fragment() {
                     ).show()
                 } else { // Valid inputs - update username
                     lifecycleScope.launch {
+
                         // Update Database
                         val username = userViewModel.userState.value.name
                         val id = userViewModel.userState.value.id
-                        Log.d("username", username)
-                        Log.d("id", id.toString())
                         val email = appDB.userDao().getUserById(id)?.email
+                        // Necessary if statement due to nullable variable
                         if (email != null) {
-                            val updatedUser = User(username = newUser, email = email)
-                            appDB.userDao().updateUser(updatedUser)
-                            // update SharedPreferences
-                            val hashedPW = userViewModel.userState.value.passwd
-                            val editor = userPasswdKV.edit()
-                            editor.remove(username)
-                            editor.putString(username, hashedPW)
-                            editor.apply()
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    parentFragment?.context,
-                                    "Fields Updated!",
-                                    Toast.LENGTH_LONG
-                                ).show()
+
+                            // check that username isn't already being used
+                            val alreadyHasAccount = checkForAccount(newUser)
+
+                            // Username has already been used
+                            if (alreadyHasAccount) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        parentFragment?.context,
+                                        "Username already in use",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            } else { // Username isn't in use: update username
+
+                                val updatedUser = User(id = id, username = newUser, email = email)
+                                appDB.userDao().updateUser(updatedUser)
+
+                                // update SharedPreferences
+                                val hashedPW = userViewModel.userState.value.passwd
+                                val editor = userPasswdKV.edit()
+                                editor.remove(username)
+                                editor.putString(newUser, hashedPW).apply()
+
+                                // update ViewModel
+                                userViewModel.setUser(
+                                    UserState(id, newUser, hashedPW)
+                                )
+
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        parentFragment?.context,
+                                        "Fields Updated!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         } else {
                             withContext(Dispatchers.Main) {
@@ -273,6 +314,56 @@ class SettingsFragment : Fragment() {
 
             if (passwdET.visibility == View.VISIBLE) {
 
+                val oldPasswd = hash(currentPasswdET.text.toString().trim())
+                val newPasswd = passwdET.text.toString().trim()
+                val confirmNewPasswd = confirmPasswdET.text.toString().trim()
+                val oldStoredPasswd = userViewModel.userState.value.passwd
+
+                // Check for valid inputs
+                if (oldPasswd != oldStoredPasswd) {
+                    Toast.makeText(
+                        this.context,
+                        "Given Password does not match stored Password",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else if (newPasswd.isEmpty() || confirmNewPasswd.isEmpty()) {
+                    Toast.makeText(
+                        this.context,
+                        "Please fill Password fields or press \'cancel\'",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (newPasswd != confirmNewPasswd) {
+                    Toast.makeText(
+                        this.context,
+                        "Password must match",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else { // Valid inputs - update username
+
+                    lifecycleScope.launch {
+
+                        // Update SharedPreferences
+                        val username = userViewModel.userState.value.name
+                        val id = userViewModel.userState.value.id
+                        val newHashedPasswd = hash(newPasswd)
+                        val editor = userPasswdKV.edit()
+
+                        editor.remove(username)
+                        editor.putString(username, newHashedPasswd).apply()
+
+                        // Update ViewModel
+                        userViewModel.setUser(
+                            UserState(id, username, newHashedPasswd)
+                        )
+
+                        // Tell user field was updated
+                        Toast.makeText(
+                            parentFragment?.context,
+                            "Fields Updated!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
         }
     }
@@ -284,6 +375,17 @@ class SettingsFragment : Fragment() {
     private fun hash(input: String): String {
         return MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
             .fold("") { str, it -> str + "%02x".format(it) }
+    }
+
+    // function to check if the user already has an account
+    private suspend fun checkForAccount (provided_username: String): Boolean {
+
+        val storedPasswd = userPasswdKV.getString(provided_username, null)
+        return if (storedPasswd == null) { // user doesn't have an account
+            false
+        } else { // user has an account
+            true
+        }
     }
 
 }
