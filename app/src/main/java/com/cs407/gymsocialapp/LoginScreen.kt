@@ -46,7 +46,7 @@ class LoginScreen() : Fragment() {
         loginButton = view.findViewById<Button>(R.id.login_button)
         signUpButton = view.findViewById<Button>(R.id.to_sign_up_button)
 
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
         userPasswdKV = requireContext().getSharedPreferences(
             getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
@@ -87,14 +87,18 @@ class LoginScreen() : Fragment() {
 
                         // navigate with successful login
                         if(success) {
+                            val hashedPW = hash(passwd)
                             // set the newly logged-in user to the viewModel
                             userViewModel.setUser(UserState(
                                 0,
                                 user,
-                                passwd))
+                                hashedPW))
                             findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
                             findNavController().navigate(R.id.action_mainFragment_to_navigation_home)
                         }
+
+                        Log.d("username in VM", userViewModel.userState.value.name)
+
 
                     } catch (e: Exception) {
                         Log.e("login Error", "Error during login: ${e.message}")

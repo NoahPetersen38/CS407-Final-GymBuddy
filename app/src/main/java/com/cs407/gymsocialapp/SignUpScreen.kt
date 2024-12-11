@@ -55,7 +55,7 @@ class SignUpScreen : Fragment() {
         passwd_confirmET = view.findViewById<EditText>(R.id.password_confirm_editText)
         signUpButton = view.findViewById<Button>(R.id.create_account_button)
         toLogInButton = view.findViewById<Button>(R.id.to_log_in_button)
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
         userPasswdKV = requireContext().getSharedPreferences(
             getString(R.string.userPasswdKV), Context.MODE_PRIVATE)

@@ -58,6 +58,23 @@
     <string name="search_usernames">Search usernames</string>
     <string name="following">Following</string>
     <string name="your_workouts">Your Workouts</string>
-
+    <!-- Strings related to Settings Screen -->
+    <string name="settingsText">Settings</string>
+    <string name="settingsSubText">Edit Account Information:</string>
+    <string name="changeUsernameButton">Change Username</string>
+    <string name="changeEmailButton">Change Email</string>
+    <string name="ChangeNameButton">Change Name</string>
+    <string name="ChangePasswordButton">Change Password</string>
+    <string name="EditFirst">Enter new First Name</string>
+    <string name="EditLast">Enter new Last Name</string>
+    <string name="SubmitButton">Submit</string>
+    <string name ="EditEmail">Enter new Email</string>
+    <string name="ConfirmEditEmail">Confirm new Email</string>
+    <string name="EditUsername">Enter new Username</string>
+    <string name="ConfirmEditUsername">Confirm new Username</string>
+    <string name="OldPassword">Enter current Password</string>
+    <string name="EditPassword">Enter new Password</string>
+    <string name="ConfirmEditPassword">Confirm new Password</string>
+    <string name="cancelButton">Cancel</string>
 
 </resources>
