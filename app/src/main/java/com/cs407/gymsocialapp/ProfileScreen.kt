@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -105,11 +106,8 @@ class ProfileScreen() : Fragment() {
             return streak
         }
 
-        streak.add(dates.first()) // Add the most recent date to start the streak
-
         var lastDate = dates.first()
-        for (i in 1 until dates.size) {
-            val currentDate = dates[i]
+        for (currentDate in dates) {
 
             // Compare the current date and last date
             val isOneDayDifference = when {
@@ -117,8 +115,8 @@ class ProfileScreen() : Fragment() {
                 currentDate.year < lastDate.year -> false // Same logic for years
                 currentDate.month > lastDate.month -> true // Next month
                 currentDate.month < lastDate.month -> false // Previous month
-                currentDate.day > lastDate.day -> currentDate.day - lastDate.day == 1 // Same month, check if days are 1 apart
-                else -> false // Same day
+                currentDate.day > lastDate.day -> currentDate.day - lastDate.day <= 1 // Same month, check if days are 1 apart
+                else -> true // Same day
             }
 
             if (isOneDayDifference) {
@@ -126,11 +124,6 @@ class ProfileScreen() : Fragment() {
                 lastDate = currentDate
             } else {
                 // End the streak once we hit a non-consecutive date
-                break
-            }
-
-            // Stop if we have reached the current day
-            if (currentDate == CalendarDay.from(Calendar.getInstance().time)) {
                 break
             }
         }
@@ -150,7 +143,7 @@ class ProfileScreen() : Fragment() {
                 CalendarDay.from(calendar.time)
             }
 
-            val sortedDates = datesToHighlight.sortedByDescending { it.date }
+            var sortedDates = datesToHighlight.sortedByDescending { it.date }
             val streak = findRecentStreak(sortedDates)
 
             val streakNumber = view?.findViewById<TextView>(R.id.streak)
@@ -165,7 +158,7 @@ class ProfileScreen() : Fragment() {
 
                     override fun decorate(view: DayViewFacade?) {
                         // Customize the highlight (e.g., use a background color)
-                        ContextCompat.getDrawable(requireContext(), com.google.android.material.R.color.material_dynamic_neutral60)
+                        ContextCompat.getDrawable(requireContext(), R.drawable.circle_background)
                             ?.let {
                                 view?.setBackgroundDrawable(
                                     it

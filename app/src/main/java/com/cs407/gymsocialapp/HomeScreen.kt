@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cs407.gymsocialapp.data.Post
 import com.cs407.gymsocialapp.data.PostDatabase
+import com.cs407.gymsocialapp.data.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,33 +33,72 @@ class HomeScreen : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var postAdapter: PostAdapter
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var searchInput: EditText
+    private lateinit var searchButton: AppCompatImageButton
+    private lateinit var followingRecyclerView: RecyclerView
+    private lateinit var followingAdapter: PostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
 
         recyclerView = view.findViewById(R.id.your_workouts_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        searchInput = view.findViewById(R.id.search_bar)
+        searchButton = view.findViewById(R.id.search_button)
+
+        followingRecyclerView = view.findViewById(R.id.following_recycler_view)
+        followingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        followingAdapter = PostAdapter(emptyList()) // Initialize with an empty list
+        followingRecyclerView.adapter = followingAdapter
+
+
+        searchButton.setOnClickListener {
+            val query = searchInput.text.toString().trim()
+            if (query.isNotEmpty()) {
+                searchUsers(query)
+            } else {
+                Toast.makeText(requireContext(), "Please enter a username to search", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
         fetchPosts()
 
         return view
     }
+
+
+    private fun searchUsers(username: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val db = PostDatabase.getInstance(requireContext())
+
+            // Search users matching the username
+            val users: List<User> = db.userDao().searchUsersByUsername("%$username%")
+
+            if (users.isNotEmpty()) {
+                // Fetch posts by matching users
+                val userPosts: List<Pair<Post, String>> = users.flatMap { user ->
+                    db.postDao().getPostsByUser(user.id).map { post ->
+                        Pair(post, user.username)
+                    }
+                }
+
+                // Update "Following" RecyclerView with these posts
+                followingAdapter.updateData(userPosts)
+            } else {
+                // Show a message and clear "Following" RecyclerView
+                Toast.makeText(requireContext(), "No users found with username: $username", Toast.LENGTH_SHORT).show()
+                followingAdapter.updateData(emptyList())
+            }
+        }
+    }
+
+
 
 
     fun fetchPosts() {
@@ -73,31 +118,4 @@ class HomeScreen : Fragment() {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        fetchPosts() // Fetch posts every time HomeScreen is resumed
-    }
-
-
-
-    /*companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeScreen.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeScreen().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    } */
 }
